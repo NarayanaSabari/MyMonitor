@@ -1,0 +1,41 @@
+defaultRules:
+  create: false
+  rules:
+    alertmanager: false
+    etcd: false
+    general: false
+    k8s: false
+    kubeApiserver: false
+    kubePrometheusNodeAlerting: false
+    kubePrometheusNodeRecording: false
+    kubernetesAbsent: false
+    kubernetesApps: false
+    kubernetesResources: false
+    kubernetesStorage: false
+    kubernetesSystem: false
+    node: false
+    prometheusOperator: false
+
+alertmanager:
+  config:
+    global:
+      resolve_timeout: 5m
+    route:
+      group_by: ['alertname', 'namespace']
+      group_wait: 30s
+      group_interval: 5m
+      repeat_interval: 12h
+      receiver: 'webhook-receiver'
+      routes:
+      - match:
+          severity: critical
+        receiver: 'webhook-receiver'
+    receivers:
+    - name: 'webhook-receiver'
+      webhook_configs:
+      # - url: 'https://webhook.site/06287f02-2b0d-4033-bdd2-c13b75897ec7'
+      - url: 'http://localhost:5000/webhook'
+        send_resolved: true
+        http_config:
+          tls_config:
+            insecure_skip_verify: true
